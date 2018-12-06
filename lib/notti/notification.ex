@@ -3,9 +3,9 @@ defprotocol Notti.Notification do
 
   @type t :: term
 
-  @spec receiving_parties(t) :: list(ReceivingParty.t())
-  def receiving_parties(notificiation)
+  @spec receiving_parties(t, Keyword.t() | map) :: list(ReceivingParty.t())
+  def receiving_parties(notificiation, opts)
 
-  @spec build_for_channel(t, ReceivingParty.t(), Channel.t(), map) :: list()
-  def build_for_channel(notification, channel, party, details)
+  @spec build_for_channel(t, ReceivingParty.t(), Channel.t(), map, Keyword.t() | map) :: list()
+  def build_for_channel(notification, channel, party, details, opts)
 end

@@ -9,14 +9,14 @@ defmodule InvitationAccepted do
     * trainer -> managers, trainers, devs
 
     """
-    def receiving_parties(%{invitation: %{tenant: tenant, type: :manager}}) do
+    def receiving_parties(%{invitation: %{tenant: tenant, type: :manager}}, _opts) do
       [
         %TenantGroup{tenant: tenant, role: :manager},
         :devs
       ]
     end
 
-    def receiving_parties(%{invitation: %{tenant: tenant, type: :trainer}}) do
+    def receiving_parties(%{invitation: %{tenant: tenant, type: :trainer}}, _opts) do
       [
         %TenantGroup{tenant: tenant, role: :manager},
         %TenantGroup{tenant: tenant, role: :trainer},
@@ -34,7 +34,7 @@ defmodule InvitationAccepted do
 
     """
     # Email for Managers
-    def build_for_channel(notification, Email, %TenantGroup{role: :manager}, details) do
+    def build_for_channel(notification, Email, %TenantGroup{role: :manager}, details, _opts) do
       %{
         to: "#{details.first_name} <#{details.email}>",
         subject: "Invited #{notification.invitation.type} joined",
@@ -45,7 +45,7 @@ defmodule InvitationAccepted do
     end
 
     # Email for Trainers
-    def build_for_channel(notification, Email, %TenantGroup{role: :trainer}, details) do
+    def build_for_channel(notification, Email, %TenantGroup{role: :trainer}, details, _opts) do
       %{
         to: "#{details.first_name} <#{details.email}>",
         subject: "Trainer joined",
@@ -54,7 +54,7 @@ defmodule InvitationAccepted do
     end
 
     # Slack message for Devs
-    def build_for_channel(notification, Slack, :devs, details) do
+    def build_for_channel(notification, Slack, :devs, details, _opts) do
       Map.merge(details, %{
         body:
           "New #{notification.invitation.type} joined on" <>
@@ -63,7 +63,7 @@ defmodule InvitationAccepted do
     end
 
     # Database for Trainers
-    def build_for_channel(notification, Database, %TenantGroup{role: :trainer}, details) do
+    def build_for_channel(notification, Database, %TenantGroup{role: :trainer}, details, _opts) do
       Map.merge(details, %{
         notification: %{
           body: "New mate in: #{notification.invitation.tenant}"
@@ -72,7 +72,7 @@ defmodule InvitationAccepted do
     end
 
     # Fail
-    def build_for_channel(notification, _, party, details) do
+    def build_for_channel(notification, _, party, details, _opts) do
       {:not_supported, notification, party, details}
     end
   end

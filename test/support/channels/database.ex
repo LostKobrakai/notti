@@ -1,5 +1,5 @@
 defmodule Database do
-  def send_many(details) do
+  def send_many(details, _opts) do
     details
     |> Enum.group_by(& &1.notification)
     |> Enum.map(fn {notification, details} ->

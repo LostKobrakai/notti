@@ -5,7 +5,7 @@ defmodule NottiTest do
     test "returns :ok for correct usage" do
       notification = %InvitationAccepted{invitation: %{tenant: 1, type: :manager}}
 
-      assert Notti.trigger(notification) == :ok
+      assert Notti.trigger(notification, []) == :ok
 
       assert_received {Email,
                        %{
@@ -32,7 +32,7 @@ defmodule NottiTest do
     test "trainer" do
       notification = %InvitationAccepted{invitation: %{tenant: 1, type: :trainer}}
 
-      assert Notti.trigger(notification) == :ok
+      assert Notti.trigger(notification, []) == :ok
 
       assert_received {Email,
                        %{
@@ -108,7 +108,7 @@ defmodule NottiTest do
 
     test "fails for something not implementing Notti.Notification" do
       assert_raise Protocol.UndefinedError, fn ->
-        Notti.trigger(false)
+        Notti.trigger(false, [])
       end
     end
   end

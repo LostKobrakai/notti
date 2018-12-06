@@ -4,17 +4,18 @@ defmodule Notti do
   """
   require Logger
 
-  def trigger(notification) do
+  def trigger(notification, opts \\ []) do
     notification
     # Which parties are interested in that notification
-    |> Notti.Notification.receiving_parties()
+    |> Notti.Notification.receiving_parties(opts)
     # For each party build all the actions needed to happen
     # for the notification
     |> Enum.flat_map(fn party ->
       party
-      |> Notti.ReceivingParty.notification_to_actions(notification)
+      |> Notti.ReceivingParty.notification_to_actions(notification, opts)
       |> Enum.map(fn {channel, details} ->
-        {channel, Notti.Notification.build_for_channel(notification, channel, party, details)}
+        {channel,
+         Notti.Notification.build_for_channel(notification, channel, party, details, opts)}
       end)
     end)
     # Filter and warn for unimplemented notifications
@@ -23,7 +24,7 @@ defmodule Notti do
     |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
     # Hand of to channels
     |> Enum.each(fn {channel, actions} ->
-      channel.send_many(actions)
+      channel.send_many(actions, opts)
     end)
   end
 
